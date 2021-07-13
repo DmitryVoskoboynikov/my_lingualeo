@@ -9,11 +9,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class LuckyController extends AbstractController
 {
     /**
-     * @Route("/lucky/number")
+     * @Route("/lucky/number/{id}")
      */
-    public function number(): Response
+    public function number($id): Response
     {
-        $number = random_int(0, 100);
+        $number = random_int(0, $id);
 
         return $this->render('lucky/number.html.twig', [
             'number' => $number,
