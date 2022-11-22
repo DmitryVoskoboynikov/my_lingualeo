@@ -1,3 +1,16 @@
 controllers:
     resource: ../src/Controller/
     type: attribute
+
+base:
+    path: /
+    controller: App\Controller\BaseController::base
+
+user_notification:
+    path: /user/notifications
+    # the controller value has the format 'controller_class::method_name'
+    controller: App\Controller\UserController::notifications
+
+user_auth:
+    path: /auth
+    controller: App\Controller\UserController::auth
