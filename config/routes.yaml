@@ -14,3 +14,7 @@ user_notification:
 user_auth:
     path: /auth
     controller: App\Controller\UserController::auth
+
+user_reg:
+    path: /reg
+    controller: App\Controller\UserController::reg
