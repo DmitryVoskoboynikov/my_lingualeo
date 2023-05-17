@@ -46,6 +46,7 @@ class UserController extends AbstractController
         ]);
     }
 
+
     public function auth(Request $request, UserRepository $rep): Response
     {
         $form = $this->createFormBuilder(null, [
@@ -63,12 +64,24 @@ class UserController extends AbstractController
             $data = $form->getData();
 
             $user = $rep->findOneBy(['email' => $data['email']]);
-            if ($user && ($user->getPassword() == $data['password'])) {
-                return $this->redirectToRoute('user_notification');
-            } else {
+
+            if ($user == null) {
                 $form->addError(
-                    new FormError('Пользователя с такой парой логин пароль не существует.')
+                    new FormError('Пользователя с таким логином не существует.')
                 );
+            } else {
+                $hashedPassword = $this->passwordHasher->hashPassword(
+                    $user,
+                    $data['password']
+                );
+
+                if ($user->getPassword() == $hashedPassword) {
+                    return $this->redirectToRoute('user_notification');
+                } else {
+                    $form->addError(
+                        new FormError('Пользователя с такой парой логин пароль не существует.')
+                    );
+                }
             }
 
         }
@@ -78,7 +91,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    public function reg(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator): Response
+    public function reg(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
 
@@ -91,11 +104,13 @@ class UserController extends AbstractController
                 $user,
                 $user->getPassword()
             );
+
             $user->setPassword($hashedPassword);
 
             $user->setRoles(['ROLE_USER']);
 
-            // Save
+            // Save                $form->getData()['password']
+
             $entityManager->persist($user);
             $entityManager->flush();
 
